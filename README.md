@@ -1,10 +1,11 @@
 # Usage
 
-$ ping www.google.com | python ping_parse.py
+$ python ping_parse.py www.google.com
 
 ....
 
-at some point later press CTRL-C to escape.
+at some point later press CTRL-C to escape. When CTRL-C is pressed, the tail of
+ping will be output.
 
 # What Does it Do
 
@@ -25,3 +26,15 @@ latency and packet loss at several window sizes. Here's a sample of the output:
     64 bytes from 74.125.28.147: icmp_seq=949 ttl=46 time=35.039 ms
 
 Below the windowed statistics the latest lines from ping are written, as seen above.
+
+# Known Issues
+
+I wrote this program in a few hours while drinking whiskey in a ski chalet.
+It's my first time using curses, and my first time using subprocess. It really
+shouldn't work at all.  But every so often it does, here are somethings that
+will probably go wrong.
+
+* All command line arguments are passed to ping. I haven't tested parse_ping
+  with most options. If an option affects the output, it could easily break the
+  regex's I rely on for extracting data from ping's output.
+

@@ -29,12 +29,13 @@ def print_ema(screen, emas, is_ms):
         else:
             screen.addstr(('%s =%6.1f%%'%(str(k).rjust(5), v)).ljust(17))
 
-screen = curses.initscr()
-curses.cbreak()
-curses.noecho()
-ping_process = subprocess.Popen(['ping'] + sys.argv[1:], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 try:
+    screen = curses.initscr()
+    curses.cbreak()
+    curses.noecho()
+    ping_process = subprocess.Popen(['ping'] + sys.argv[1:], stdout=subprocess.PIPE, stderr=subprocess.stdout)
+
     lines = []
     # read the first line, which is PING describing its setup
     line = ping_process.stdout.readline()
