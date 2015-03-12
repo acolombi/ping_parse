@@ -37,4 +37,5 @@ will probably go wrong.
 * All command line arguments are passed to ping. I haven't tested parse_ping
   with most options. If an option affects the output, it could easily break the
   regex's I rely on for extracting data from ping's output.
-
+* ping doesn't flush STDOUT when a request times-out. This means timeouts won't
+  be reported until the next successful response (or until STDOUT is flushed).
