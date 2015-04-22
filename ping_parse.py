@@ -2,15 +2,6 @@ import curses, time, sys, re, random, subprocess, signal
 
 signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-DEBUG = False
-spacing = 4
-ms_ema = { 5 : None, 20 : None, 100 : None, 'INF' : None }
-pl_ema = { 10 : None, 100 : None, 1000 : None, 'INF' : None }
-pong = re.compile('.*time=(\d+\.\d+) ms$')
-miss = re.compile('Request timeout.*$')
-setup = re.compile('PING (.*): \d+.*$')
-total = 0
-
 def update_ema(emas, x):
     for (k, v) in emas.items():
         if v is None:
@@ -29,8 +20,23 @@ def print_ema(screen, emas, is_ms):
         else:
             screen.addstr(('%s =%6.1f%%'%(str(k).rjust(5), v)).ljust(17))
 
+
+DEBUG = False
+spacing = 4
+pong = re.compile('.*time=(\d+\.\d+) ms$')
+miss = re.compile('Request timeout.*$')
+setup = re.compile('PING (.*): \d+.*$')
 lines = []
+
+def reset_stats():
+    ms_ema = { 10 : None, 100 : None, 1000 : None, 'INF' : None }
+    pl_ema = { 10 : None, 100 : None, 1000 : None, 'INF' : None }
+    total = 0
+    return ms_ema, pl_ema, total
+
 screen = curses.initscr()
+screen.nodelay(1)
+ms_ema, pl_ema, total = reset_stats()
 
 try:
     curses.cbreak()
@@ -75,8 +81,14 @@ try:
             screen.refresh()
             line = ping_process.stdout.readline()
             total += 1
+
             if DEBUG and random.random() > 0.5:
                 line = 'Request timeout DEBUG\n'
+
+            reset = screen.getch()
+            if reset == ord('r') or reset == ord('R'):
+                ms_ema, pl_ema, total = reset_stats()
+                lines += ['RESET']
     else:
         # capture usage/error info so we can print that
         lines += [line]
@@ -84,6 +96,7 @@ try:
 
 finally:
     screen.addstr(2, 0, 'Packet loss:'.ljust(12))
+    screen.nodelay(0)
     curses.echo()
     curses.nocbreak()
     curses.endwin()
