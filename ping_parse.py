@@ -29,8 +29,8 @@ setup = re.compile('PING (.*): \d+.*$')
 lines = []
 
 def reset_stats():
-    ms_ema = { 10 : None, 100 : None, 1000 : None, 'INF' : None }
-    pl_ema = { 10 : None, 100 : None, 1000 : None, 'INF' : None }
+    ms_ema = { 120 : None, 600 : None, 1800 : None, 'INF' : None }
+    pl_ema = { 120 : None, 600 : None, 1800 : None, 'INF' : None }
     total = 0
     return ms_ema, pl_ema, total
 
