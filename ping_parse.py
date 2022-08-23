@@ -11,8 +11,7 @@ def update_ema(emas, x):
             emas[k] = v*(1-a) + a*x
 
 def print_ema(screen, emas, is_ms):
-    keys = emas.keys()
-    keys.sort()
+    keys = [x for x in emas.keys()]
     for k in keys:
         v = emas[k] if emas[k] is not None else 0.0
         if is_ms:
@@ -44,13 +43,13 @@ try:
     ping_process = subprocess.Popen(['ping'] + sys.argv[1:], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     # read the first line, which is PING describing its setup
-    line = ping_process.stdout.readline()
+    line = ping_process.stdout.readline().decode('utf8')
     m = setup.match(line)
     # check for a match, if there is no match then it's likely ping is providing usage
     if m:
         target = m.group(1)
 
-        line = ping_process.stdout.readline()
+        line = ping_process.stdout.readline().decode('utf8')
         total += 1
         while line:
             lines += [line]
@@ -79,7 +78,7 @@ try:
             for i in range(len(lines)):
                 screen.addstr(spacing+i, 0, lines[i])
             screen.refresh()
-            line = ping_process.stdout.readline()
+            line = ping_process.stdout.readline().decode('utf8')
             total += 1
 
             if DEBUG and random.random() > 0.5:
@@ -102,4 +101,4 @@ finally:
     curses.endwin()
     # output the tail end of the ping, useful because ping has some final stats
     for line in lines:
-        print line,
+        print(line.strip(),)
